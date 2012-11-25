@@ -7,9 +7,9 @@ a {
 }
 body {
 	color: #555;
-	font-family: 'Cardo', serif;
+	font-family: 'Cardo', Georgia, serif;
 	font-size: 1.2em;
-	padding: 1em;
+	padding: 2em;
 }
 h1 {
 	font-size: 2em;
@@ -41,6 +41,12 @@ iframe {
 	border: 1px #555 solid;
 	margin: 1em 0;
 }
+@media ( max-width: 600px ) {
+	iframe {
+		width: 100%;
+	}
+}
+
 #tophead {
 	text-align: center;
 }
