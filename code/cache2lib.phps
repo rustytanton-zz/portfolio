@@ -4,9 +4,9 @@
  * 
  * Functions/classes used by multiple parts of the cache component
  * 
- * @package WebMD_Blogs_Components
- * @subpackage Cache2
+ * @package WebMD Blogs Plugin\Cache2
  * @since r32
+ * @version r@RELEASE_NUMBER@
  */
 
 /**
@@ -57,6 +57,8 @@ function webmd_cache2_wp_domain() {
  * Cache 2 Job
  *
  * Interface to interact with a job in the queue
+ * 
+ * @package WebMD Blogs Plugin\Cache2
  */
 class WebMD_Cache2Job {
 
@@ -252,6 +254,8 @@ class WebMD_Cache2Job {
  * Cache 2 Job Queue
  * 
  * Object to control the jobs queue
+ * 
+ * @package WebMD Blogs Plugin\Cache2
  */
 class WebMD_Cache2JobsQueue {
 	
@@ -471,6 +475,8 @@ class WebMD_Cache2JobsQueue {
  * - Category pages
  * - Tag pages
  * - RSS feeds
+ * 
+ * @package WebMD Blogs Plugin\Cache2
  */
 class WebMD_Cache2URLList {
 
@@ -535,6 +541,8 @@ class WebMD_Cache2URLList {
  * Process manager
  * 
  * This is 100% *nix-centric, will bomb on Windows
+ * 
+ * @package WebMD Blogs Plugin\Cache2
  */
 class WebMD_Cache2Process {
 
@@ -672,6 +680,8 @@ class WebMD_Cache2Process {
 
 /**
  * To write a cache
+ *
+ * @package WebMD Blogs Plugin\Cache2
  */
 class WebMD_Cache2CacheWriter {
 
@@ -779,7 +789,13 @@ class WebMD_Cache2CacheWriter {
 
 	protected function deployNewCache() {
 		$this->deleteCache();
-		if ( !rename( $this->cache_temp_dir, $this->cache_dir ) ) {
+		$cmd = 'cp -r ';
+		$args = array(
+			$this->cache_temp_dir,
+			$this->cache_dir
+		);
+		$process = new WebMD_Cache2Process( $cmd, $args );
+		if ( !$process->run() ) {
 			$this->job->error( 9, $this->cache_temp_dir . " was not deployed to " . $this->cache_dir );
 			exit(1);
 		}
@@ -855,6 +871,11 @@ class WebMD_Cache2CacheWriter {
 }
 
 
+/**
+ * Template for resource maps
+ * 
+ * @package WebMD Blogs Plugin\Cache2
+ */
 abstract class WebMD_Cache2DeployMap {
 
 	protected $blogID;
@@ -884,6 +905,12 @@ abstract class WebMD_Cache2DeployMap {
 }
 
 
+/**
+ * Map of URL requests
+ * 
+ * @package WebMD Blogs Plugin\Cache2
+ * @uses WebMD_Cache2DeployMap
+ */
 class WebMD_Cache2DeployMapRequests extends WebMD_Cache2DeployMap {
 
 	protected function buildMap() {
@@ -931,6 +958,9 @@ class WebMD_Cache2DeployMapRequests extends WebMD_Cache2DeployMap {
 
 /**
  * Build maps of assets and requests to deploy
+ *
+ * @package WebMD Blogs Plugin\Cache2
+ * @uses WebMD_Cache2DeployMap
  */
 class WebMD_Cache2DeployMapAssets extends WebMD_Cache2DeployMap {
 
@@ -1000,6 +1030,8 @@ class WebMD_Cache2DeployMapAssets extends WebMD_Cache2DeployMap {
 
 /**
  * Add a post-process function
+ *
+ * @package WebMD Blogs Plugin\Cache2
  */
 class WebMD_Cache2PostProcessor {
 
@@ -1062,13 +1094,18 @@ class WebMD_Cache2PostProcessor {
 	}
 }
 
-/**
- * Display jobs in a table
- */
+
 if ( defined('ABSPATH') && !class_exists('WP_List_Table') ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 if ( defined('ABSPATH') && class_exists('WP_List_Table') ) {
+
+	/**
+	 * Display jobs in a table
+	 *
+	 * @package WebMD Blogs Plugin\Cache2
+	 * @uses WP_List_Table
+	 */
 	class WebMD_Cache2JobsTable extends WP_List_Table {
 
 		function __construct(){
